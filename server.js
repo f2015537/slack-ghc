@@ -1,37 +1,32 @@
-var conString = 'mongodb://anumeha:systers2018@ds217131.mlab.com:17131/demo-inviter'
-var express = require('express')
-var app = express()
+const conString = require('./config/keys').mongoURI
+const express = require('express')
+
+const app = express()
 const PORT = process.env.PORT || 5000
-var bodyParser = require('body-parser')
+const bodyParser = require('body-parser')
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-var nodeMailer = require('nodemailer')
-var mongoose = require('mongoose')
-mongoose.Promise = global.Promise
-mongoose.connect(conString, () => {
+const nodeMailer = require('nodemailer')
+const mongoose = require('mongoose')
+const User = require('./models/User')
 
-})
-var nameSchema = new mongoose.Schema({
-  name: String,
-  created: { type: Date, default: Date.now }
-})
-var User = mongoose.model('User', nameSchema)
+mongoose.Promise = global.Promise
+mongoose.connect(conString)
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/main.html')
+  res.sendFile(`${__dirname}/main.html`)
 })
 
 app.post('/addname', (req, res) => {
-  var myData = new User(req.body)
-  myData.save()
-    .then(item => {
-      res.sendFile(__dirname + '/response.html')
+  User.create(req.body)
+    .then((user) => {
+      res.sendFile(`${__dirname}/response.html`)
     })
-
-    .catch(err => {
-      res.status(400).send('Unable to save to database')
+    .catch((err) => {
+      res.status(400).send(err)
     })
-  let transporter = nodeMailer.createTransport({
+  const transporter = nodeMailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
@@ -40,7 +35,7 @@ app.post('/addname', (req, res) => {
       pass: ''
     }
   })
-  let mailOptions = {
+  const mailOptions = {
     from: '<communitystaff@anitab.org>', // sender address
     to: req.body.name, // list of receivers
     subject: 'Join the GHC slack channel !', // Subject line
@@ -58,5 +53,5 @@ app.post('/addname', (req, res) => {
 })
 
 app.listen(PORT, () => {
-
+  console.log('now listening on port 5000!')
 })
