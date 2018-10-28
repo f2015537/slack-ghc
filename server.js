@@ -19,6 +19,7 @@ var User = mongoose.model('User', nameSchema)
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/main.html')
+  // res.sendFile(__dirname + '/test.html') // Uncomment this line and comment the line above for testing
 })
 
 app.post('/addname', (req, res) => {
@@ -26,6 +27,7 @@ app.post('/addname', (req, res) => {
   myData.save()
     .then(item => {
       res.sendFile(__dirname + '/response.html')
+      // res.sendFile(__dirname + '/test.html') // Uncomment this line and comment the line above for testing
     })
 
     .catch(err => {
@@ -60,3 +62,5 @@ app.post('/addname', (req, res) => {
 app.listen(PORT, () => {
 
 })
+
+module.exports = app
