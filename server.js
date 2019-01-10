@@ -7,6 +7,7 @@ const bodyParser = require('body-parser')
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+
 const nodeMailer = require('nodemailer')
 const mongoose = require('mongoose')
 const User = require('./models/User')
@@ -14,9 +15,12 @@ const User = require('./models/User')
 mongoose.Promise = global.Promise
 mongoose.connect(conString)
 
+
 app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/main.html`)
 })
+
+app.use(express.static('public'))
 
 app.post('/addname', (req, res) => {
   User.create(req.body)
